@@ -42,7 +42,17 @@ void LogEndpoint::_send_msg(const mavlink_message_t *msg, int target_sysid)
 {
     uint8_t data[MAVLINK_MAX_PACKET_LEN];
     struct buffer buffer {
-        0, data
+        .len = 0,
+        .data = data,
+        .msgid = msg->msgid,
+        .target_sysid = target_sysid,
+        .target_compid = MAV_COMP_ID_ALL,
+        .src_sysid = msg->sysid,
+        .src_compid = msg->compid,
+        /*
+         * payload is only used by the internal log endpoints,
+         * don't bother adding them
+         */
     };
 
     buffer.len = mavlink_msg_to_send_buffer(data, msg);
